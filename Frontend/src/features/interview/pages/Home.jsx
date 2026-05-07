@@ -125,17 +125,17 @@ const Home = () => {
 
             {/* Recent Reports List */}
            {reports.length > 0 && (
-    <section className='recent-reports'>
+                <section className='recent-reports'>
 
-        <div className='recent-reports__header'>
-            <h2>My Recent Interview Plans</h2>
+                    <div className='recent-reports__header'>
+                        <h2>My Recent Interview Plans</h2>
 
-            <button
-    className='view-all-btn'
-    onClick={() => setShowAllReports(!showAllReports)}
->
-    {showAllReports ? "Show Less" : "View All"}
-</button>
+                        <button
+                className='view-all-btn'
+                onClick={() => setShowAllReports(!showAllReports)}
+            >
+                {showAllReports ? "Show Less" : "View All"}
+            </button>
         </div>
 
         <ul className='reports-list'>
@@ -154,8 +154,20 @@ const Home = () => {
                     <h3>{report.title || 'Untitled Position'}</h3>
 
                     <p className='report-meta'>
-                        Generated on {new Date(report.createdAt).toLocaleDateString()}
-                    </p>
+    Generated on {
+        new Date(report.createdAt)
+            .toLocaleDateString('en-GB')
+            .replace(/\//g, '-')
+    }
+    {" at "}
+    {
+        new Date(report.createdAt)
+            .toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+    }
+</p>
 
                     <p className={`match-score ${
                         report.matchScore >= 80

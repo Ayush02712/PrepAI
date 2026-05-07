@@ -35,44 +35,128 @@ const interviewReportSchema = z.object({
 async function generateInterviewReport({ resume, selfDescription, jobDescription,title }) {
 
 
- const prompt = `
-You are an expert interview coach.
+const prompt = `
+You are an expert AI interview coach.
 
-Return ONLY valid JSON. No text outside JSON.
+Return ONLY valid JSON.
 
-STRICT RULES:
-- technicalQuestions MUST be an array of at least 5 objects
-- behavioralQuestions MUST be an array of at least 5 objects
-- Each object MUST have:
-  - question (string)
-  - intention (string)
-  - answer (string)
-- Do NOT return strings instead of arrays
-- Do NOT leave any field empty
--Return ONLY raw JSON array objects. Never stringify arrays.
+The output MUST strictly follow the provided schema.
 
-Example format:
+DO NOT:
+- return markdown
+- return explanations
+- return arrays of strings
+- stringify JSON
+- omit any field
+
+REQUIRED FIELDS:
+- matchScore
+- technicalQuestions
+- behavioralQuestions
+- skillGaps
+- preparationPlan
+- title
+
+STRICT REQUIREMENTS:
+
+1. matchScore
+- MUST be a number between 0 and 100
+- MUST represent how well the candidate matches the job description
+Scoring Guidelines:
+
+90-100:
+Candidate strongly matches almost all required skills and experience.
+
+75-89:
+Candidate matches many core technical requirements but has some gaps.
+
+60-74:
+Candidate has partial alignment but lacks important required skills.
+
+40-59:
+Candidate has general technical background but lacks major domain-specific skills.
+
+0-39:
+Candidate lacks most required skills and experience.
+
+IMPORTANT:
+Be STRICT while scoring.
+Missing core required technologies or experience should significantly reduce the score.
+
+2. technicalQuestions
+- MUST be an array of at least 5 OBJECTS
+- EACH object MUST contain:
+  - question
+  - intention
+  - answer
+
+Example:
 {
-  "technicalQuestions": [
-    {
-      "question": "...",
-      "intention": "...",
-      "answer": "..."
-    }
-  ],
-  "behavioralQuestions": [
-    {
-      "question": "...",
-      "intention": "...",
-      "answer": "..."
-    }
+  "question": "Explain REST APIs",
+  "intention": "Evaluate backend fundamentals",
+  "answer": "Discuss HTTP methods and stateless communication"
+}
+
+3. behavioralQuestions
+- MUST be an array of at least 5 OBJECTS
+- EACH object MUST contain:
+  - question
+  - intention
+  - answer
+
+4. skillGaps
+- MUST be an array of OBJECTS
+- DO NOT return strings
+
+EACH object MUST contain:
+- skill
+- severity
+
+severity MUST ONLY be:
+- low
+- medium
+- high
+
+Example:
+{
+  "skill": "System Design",
+  "severity": "high"
+}
+
+5. preparationPlan
+- MUST be an array of OBJECTS
+- MUST contain EXACTLY 7 days
+- day values MUST start from 1 and end at 7
+- DO NOT skip any days
+- Returning more or fewer than 7 days is invalid
+- DO NOT return strings
+- DO NOT return numbers directly inside the array
+- Each day MUST contain maximum 2 tasks
+- Tasks MUST be concise
+
+Example:
+{
+  "day": 1,
+  "focus": "Data Structures",
+  "tasks": [
+    "Solve 5 array problems",
+    "Revise time complexity"
   ]
 }
 
+IMPORTANT:
+Return ONLY raw JSON object.
+
 Candidate Details:
-Resume: ${resume}
-Self Description: ${selfDescription}
-Job Description: ${jobDescription}
+
+Resume:
+${resume}
+
+Self Description:
+${selfDescription}
+
+Job Description:
+${jobDescription}
 `;
 
     const response = await ai.models.generateContent({

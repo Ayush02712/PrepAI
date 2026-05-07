@@ -354,6 +354,10 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
 }
 
 .recent-reports {
+    width: 100%;
+
+    max-width: 1200px;
+
     margin-top: 3rem;
 }
 
@@ -369,6 +373,8 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     list-style: none;
 
     padding: 0;
+    
+    width: 100%;
 }
 // ── Report Item ───────────────────────────────────────────────────────────────
 .report-item {

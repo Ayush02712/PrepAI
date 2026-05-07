@@ -13,7 +13,10 @@ async function generateInterViewReportController(req, res) {
         const data = await pdfParse(req.file.buffer);
         console.log("2️⃣ PDF parsed");
 
-        const resumeContent = data.text;
+        const resumeContent = data.text
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 4000);
         const { selfDescription, jobDescription } = req.body;
 
         const interViewReportByAi = await generateInterviewReport({
@@ -24,41 +27,89 @@ async function generateInterViewReportController(req, res) {
 
         console.log("3️⃣ AI RESPONSE:", interViewReportByAi);
 
-        // 🔥 STEP 1: FORCE STRUCTURE (MOST IMPORTANT)
-
-        // Fix technicalQuestions
-if (typeof interViewReportByAi.technicalQuestions === "string") {
-    try {
-        interViewReportByAi.technicalQuestions = JSON.parse(
-            interViewReportByAi.technicalQuestions
-        );
-    } catch {
-        interViewReportByAi.technicalQuestions = [];
-    }
+        // FIX technical questions
+if (!Array.isArray(interViewReportByAi.technicalQuestions)) {
+    interViewReportByAi.technicalQuestions = [];
 }
+
+interViewReportByAi.technicalQuestions =
+    interViewReportByAi.technicalQuestions.map((q, index) => {
+
+        // STRING CASE
+        if (typeof q === "string") {
+            return {
+                question: q,
+                intention: "Evaluate technical knowledge",
+                answer: "Explain clearly with examples"
+            };
+        }
+
+        // INVALID OBJECT CASE
+        if (
+            typeof q !== "object" ||
+            q === null
+        ) {
+            return {
+                question: `Technical Question ${index + 1}`,
+                intention: "Evaluate technical knowledge",
+                answer: "Explain clearly with examples"
+            };
+        }
+
+        // VALID OBJECT CASE
+        return {
+            question:
+                q.question || `Technical Question ${index + 1}`,
+
+            intention:
+                q.intention || "Evaluate technical knowledge",
+
+            answer:
+                q.answer || "Explain clearly with examples"
+        };
+    });
 
 // FIX behavioral questions
-if (typeof interViewReportByAi.behavioralQuestions === "string") {
-    try {
-        interViewReportByAi.behavioralQuestions = JSON.parse(
-            interViewReportByAi.behavioralQuestions
-        );
-    } catch {
-        interViewReportByAi.behavioralQuestions = [];
-    }
+if (!Array.isArray(interViewReportByAi.behavioralQuestions)) {
+    interViewReportByAi.behavioralQuestions = [];
 }
 
-        // 🔥 STEP 2: HANDLE ARRAY WITH STRING ITEMS
-        interViewReportByAi.technicalQuestions = interViewReportByAi.technicalQuestions.map(q =>
-            typeof q === "string"
-                ? {
-                    question: q,
-                    intention: "Evaluate technical knowledge",
-                    answer: "Explain clearly with examples"
-                }
-                : q
-        );
+interViewReportByAi.behavioralQuestions =
+    interViewReportByAi.behavioralQuestions.map((q, index) => {
 
+        if (typeof q === "string") {
+            return {
+                question: q,
+                intention: "Evaluate communication and teamwork",
+                answer: "Use STAR method"
+            };
+        }
+
+        if (
+            typeof q !== "object" ||
+            q === null
+        ) {
+            return {
+                question: `Behavioral Question ${index + 1}`,
+                intention: "Evaluate communication and teamwork",
+                answer: "Use STAR method"
+            };
+        }
+
+        return {
+            question:
+                q.question || `Behavioral Question ${index + 1}`,
+
+            intention:
+                q.intention || "Evaluate communication and teamwork",
+
+            answer:
+                q.answer || "Use STAR method"
+        };
+    });
+
+        // 🔥 STEP 2: HANDLE ARRAY WITH STRING ITEMS
+        
         interViewReportByAi.behavioralQuestions = interViewReportByAi.behavioralQuestions.map(q =>
             typeof q === "string"
                 ? {
@@ -68,6 +119,76 @@ if (typeof interViewReportByAi.behavioralQuestions === "string") {
                 }
                 : q
         );
+        // FIX skill gaps
+if (!Array.isArray(interViewReportByAi.skillGaps)) {
+    interViewReportByAi.skillGaps = [];
+}
+
+interViewReportByAi.skillGaps =
+    interViewReportByAi.skillGaps.map(skill =>
+        typeof skill === "string"
+            ? {
+                skill,
+                severity: "medium"
+            }
+            : skill
+    );
+
+
+// FIX preparation plan
+if (!Array.isArray(interViewReportByAi.preparationPlan)) {
+    interViewReportByAi.preparationPlan = [];
+}
+
+interViewReportByAi.preparationPlan =
+    interViewReportByAi.preparationPlan.map((plan, index) => {
+
+        // STRING CASE
+        if (typeof plan === "string") {
+            return {
+                day: index + 1,
+                focus: plan,
+                tasks: ["Study and practice"]
+            };
+        }
+
+        // NUMBER CASE
+        if (typeof plan === "number") {
+            return {
+                day: plan,
+                focus: "Interview Preparation",
+                tasks: ["Study and practice"]
+            };
+        }
+
+        // INVALID OBJECT CASE
+        if (
+            typeof plan !== "object" ||
+            plan === null
+        ) {
+            return {
+                day: index + 1,
+                focus: "Interview Preparation",
+                tasks: ["Study and practice"]
+            };
+        }
+
+        // VALID OBJECT CASE
+        return {
+            day:
+                typeof plan.day === "number"
+                    ? plan.day
+                    : index + 1,
+
+            focus:
+                plan.focus || "Interview Preparation",
+
+            tasks:
+                Array.isArray(plan.tasks)
+                    ? plan.tasks
+                    : ["Study and practice"]
+        };
+    });
 
         // 🔥 STEP 3: ENSURE NOT EMPTY
         if (!interViewReportByAi.technicalQuestions.length) {
@@ -106,7 +227,9 @@ if (typeof interViewReportByAi.behavioralQuestions === "string") {
     } catch (error) {
         console.error("❌ ERROR:", error);
         return res.status(500).json({
-            message: "Error generating interview report.",
+            message: error.status === 503
+    ? "AI server is busy. Please try again in a moment."
+    : "Error generating interview report.",
             error: error.message
         });
     }
