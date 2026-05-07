@@ -17,19 +17,19 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
 // ── Page Shell ───────────────────────────────────────────────────────────────
 .home-page {
     width: 100%;
-    min-height: 100vh;
-    background-color: $bg-page;
-    color: $text-primary;
-    font-family: $font-stack;
+
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 2rem;
 
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem 1.5rem;
-    gap: 2rem;
-}
 
+    flex-direction: column;
+
+    align-items: center;
+}
 // ── Page Header ──────────────────────────────────────────────────────────────
 .page-header {
     text-align: center;
@@ -320,38 +320,19 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
     }
 }
 
-.recent-reports{
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-    max-width: 900px;
+.reports-list {
+    display: grid;
 
-    .reports-list{
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 
-        .report-item{
-            background-color: $bg-card;
-            border: 1px solid $border-color;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            cursor: pointer;
-            flex-shrink: 0;
+    gap: 1.5rem;
 
-            .match-score {
-                font-size: 0.8rem;
-                font-weight: 600;
-                color: $accent;
-                align-items: flex-start;
-            }
-        }
-    }
+    margin-top: 1.5rem;
+    
+    margin-top: 3rem;
+
+    list-style: none;
+    padding: 0;
 }
 
 
@@ -369,5 +350,125 @@ $font-stack:     system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Robot
         &:hover {
             color: $text-primary;
         }
+    }
+}
+
+.recent-reports {
+    margin-top: 3rem;
+}
+
+.reports-list {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+    gap: 1.5rem;
+
+    margin-top: 1.5rem;
+
+    list-style: none;
+
+    padding: 0;
+}
+// ── Report Item ───────────────────────────────────────────────────────────────
+.report-item {
+    background: #111827;
+
+    border-radius: 14px;
+
+    padding: 1.25rem;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+    min-height: 220px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    border: 1px solid rgba(255,255,255,0.08);
+
+    &:hover {
+        transform: translateY(-4px);
+
+        border-color: #3b82f6;
+    }
+
+    h3 {
+        font-size: 1rem;
+
+        line-height: 1.4;
+
+        margin-bottom: 1rem;
+
+        color: white;
+
+        display: -webkit-box;
+
+        -webkit-line-clamp: 3;
+
+        -webkit-box-orient: vertical;
+
+        overflow: hidden;
+    }
+
+    .report-meta {
+        color: #9ca3af;
+
+        font-size: 0.85rem;
+
+        margin-bottom: 0.75rem;
+    }
+
+    .match-score {
+        font-weight: 600;
+
+        margin-top: auto;
+    }
+}
+
+.recent-reports__header {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    margin-bottom: 1.5rem;
+}
+
+.recent-reports__header h2 {
+    margin: 0;
+}
+
+.view-all-btn {
+    background: transparent;
+
+    border: 1px solid #3b82f6;
+
+    color: #3b82f6;
+
+    padding: 0.5rem 1rem;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+    font-weight: 500;
+
+    &:hover {
+        background: #3b82f6;
+
+        color: white;
     }
 }

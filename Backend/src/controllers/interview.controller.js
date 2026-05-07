@@ -27,26 +27,26 @@ async function generateInterViewReportController(req, res) {
         // 🔥 STEP 1: FORCE STRUCTURE (MOST IMPORTANT)
 
         // Fix technicalQuestions
-        if (!Array.isArray(interViewReportByAi.technicalQuestions)) {
-            interViewReportByAi.technicalQuestions = [
-                {
-                    question: String(interViewReportByAi.technicalQuestions || "Sample technical question"),
-                    intention: "Evaluate technical understanding",
-                    answer: "Explain clearly with proper reasoning"
-                }
-            ];
-        }
+if (typeof interViewReportByAi.technicalQuestions === "string") {
+    try {
+        interViewReportByAi.technicalQuestions = JSON.parse(
+            interViewReportByAi.technicalQuestions
+        );
+    } catch {
+        interViewReportByAi.technicalQuestions = [];
+    }
+}
 
-        // Fix behavioralQuestions
-        if (!Array.isArray(interViewReportByAi.behavioralQuestions)) {
-            interViewReportByAi.behavioralQuestions = [
-                {
-                    question: String(interViewReportByAi.behavioralQuestions || "Sample behavioral question"),
-                    intention: "Evaluate soft skills",
-                    answer: "Use STAR method"
-                }
-            ];
-        }
+// FIX behavioral questions
+if (typeof interViewReportByAi.behavioralQuestions === "string") {
+    try {
+        interViewReportByAi.behavioralQuestions = JSON.parse(
+            interViewReportByAi.behavioralQuestions
+        );
+    } catch {
+        interViewReportByAi.behavioralQuestions = [];
+    }
+}
 
         // 🔥 STEP 2: HANDLE ARRAY WITH STRING ITEMS
         interViewReportByAi.technicalQuestions = interViewReportByAi.technicalQuestions.map(q =>

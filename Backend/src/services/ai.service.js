@@ -49,6 +49,7 @@ STRICT RULES:
   - answer (string)
 - Do NOT return strings instead of arrays
 - Do NOT leave any field empty
+-Return ONLY raw JSON array objects. Never stringify arrays.
 
 Example format:
 {
