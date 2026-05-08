@@ -10,7 +10,16 @@ import Interview from "./features/interview/pages/Interview";
 
 import Layout from "./components/Layout";
 
+import Landing from "./features//interview/pages/Landing";
+
+
 export const router = createBrowserRouter([
+
+    {
+    path: "/",
+    element: <Landing />
+    },
+
     {
         path: "/login",
         element: <Login />
@@ -29,8 +38,11 @@ export const router = createBrowserRouter([
         ),
 
         children: [
+            
+          
+            
             {
-                path: "/",
+                path: "/generate",
                 element: <Home />
             },
 
