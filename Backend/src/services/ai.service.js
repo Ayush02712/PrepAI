@@ -9,14 +9,22 @@ const ai = new GoogleGenAI({
 
 
 const interviewReportSchema = z.object({
-    matchScore: z.number().describe("A score between 0 and 100 indicating how well the candidate's profile matches the job describe"),
+     matchScore: z.number().describe("A score between 0 and 100 indicating how well the candidate's profile matches the job describe"),
+
+    verdict: z.enum([
+        "Weak Match",
+        "Moderate Match",
+        "Good Match",
+        "Strong Match",
+        "Excellent Match"
+    ]).describe("Overall candidate suitability verdict based strictly on matchScore"),
     technicalQuestions: z.array(z.object({
         question: z.string().describe("The technical question can be asked in the interview"),
         intention: z.string().describe("The intention of interviewer behind asking this question"),
         answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
     })).describe("Technical questions that can be asked in the interview along with their intention and how to answer them"),
     behavioralQuestions: z.array(z.object({
-        question: z.string().describe("The technical question can be asked in the interview"),
+        question: z.string().describe("The behavioral question that can be asked in the interview"),
         intention: z.string().describe("The intention of interviewer behind asking this question"),
         answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
     })).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
@@ -51,6 +59,7 @@ DO NOT:
 
 REQUIRED FIELDS:
 - matchScore
+- verdict
 - technicalQuestions
 - behavioralQuestions
 - skillGaps
@@ -83,12 +92,38 @@ IMPORTANT:
 Be STRICT while scoring.
 Missing core required technologies or experience should significantly reduce the score.
 
+1.1 verdict
+
+The verdict MUST strictly follow these score ranges:
+
+0-39:
+Weak Match
+
+40-59:
+Moderate Match
+
+60-74:
+Good Match
+
+75-89:
+Strong Match
+
+90-100:
+Excellent Match
+
+IMPORTANT:
+- verdict MUST align with matchScore
+- NEVER contradict the score
+
 2. technicalQuestions
 - MUST be an array of at least 5 OBJECTS
 - EACH object MUST contain:
   - question
   - intention
   - answer
+
+  DO NOT combine question, intention, and answer into a single string.
+  Each field must be separate.
 
 Example:
 {
@@ -144,6 +179,7 @@ Example:
   ]
 }
 
+
 IMPORTANT:
 Return ONLY raw JSON object.
 
@@ -160,7 +196,7 @@ ${jobDescription}
 `;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -202,7 +238,7 @@ Keep the response practical, concise, and structured.
 `;
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-lite",
+        model: "gemini-2.5-flash",
         contents: prompt
     })
 
