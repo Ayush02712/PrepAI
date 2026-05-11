@@ -12,30 +12,52 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const logoutUser = async () => {
+
         await handleLogout();
+
         navigate("/login");
     };
 
     return (
+
         <nav className="navbar">
 
             <div className="logo">
-                AI Job Prep
+                PrepAI
             </div>
 
             <div className="nav-links">
 
-                <Link to="/">Home</Link>
+                <Link to="/">
+                    Home
+                </Link>
 
-                {!user ? (
+                {user && (
                     <>
-                        <Link to="/login">Login</Link>
-                        <Link to="/register">Register</Link>
+                        <Link to="/generate">
+                            Resume Analyzer
+                        </Link>
+
+                        <Link to="/preparation-guide">
+                            AI Prep Guide
+                        </Link>
+
+                        <button onClick={logoutUser}>
+                            Logout
+                        </button>
                     </>
-                ) : (
-                    <button onClick={logoutUser}>
-                        Logout
-                    </button>
+                )}
+
+                {!user && (
+                    <>
+                        <Link to="/login">
+                            Login
+                        </Link>
+
+                        <Link to="/register">
+                            Register
+                        </Link>
+                    </>
                 )}
 
             </div>

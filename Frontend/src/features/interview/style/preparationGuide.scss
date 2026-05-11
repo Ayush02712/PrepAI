@@ -1,0 +1,135 @@
+.prep-page{
+    min-height:100vh;
+    background:#050816;
+    color:white;
+    padding:2rem;
+}
+
+.prep-container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.prep-box{
+    background:#0f172a;
+    border:1px solid #1e293b;
+    border-radius:20px;
+    padding:2rem;
+}
+
+.prep-box h1{
+    font-size:2.8rem;
+    margin-bottom:0.5rem;
+}
+
+.prep-subtitle{
+    color:#94a3b8;
+    margin-bottom:2rem;
+}
+
+.prep-form{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:1rem;
+}
+
+.prep-form input,
+.prep-form select{
+    background:#111827;
+    border:1px solid #334155;
+    color:white;
+    padding:1rem;
+    border-radius:12px;
+    outline:none;
+}
+
+.generate-btn{
+    background:linear-gradient(
+        90deg,
+        #ff007a,
+        #ff4d9d
+    );
+
+    border:none;
+
+    color:white;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+.result-box{
+    margin-top:2rem;
+
+    background:#0f172a;
+
+    border:1px solid #1e293b;
+
+    border-radius:20px;
+
+    padding:2rem;
+
+    white-space:pre-wrap;
+
+    line-height:1.8;
+}
+
+.recent-guides{
+    margin-top:3rem;
+}
+
+.recent-header{
+    margin-bottom:1.5rem;
+}
+
+.guides-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
+
+    gap:1.5rem;
+}
+
+.guide-card{
+    background:#07122b;
+
+    border:1px solid #1e3a8a;
+
+    border-radius:20px;
+
+    padding:1.5rem;
+
+    cursor:pointer;
+
+    transition:0.2s;
+}
+
+.guide-card:hover{
+    transform:translateY(-4px);
+
+    border-color:#ff007a;
+}
+
+.guide-card h3{
+    font-size:1.4rem;
+
+    margin-bottom:0.8rem;
+}
+
+.guide-card p{
+    color:#94a3b8;
+
+    margin-bottom:1rem;
+}
+
+.guide-card span{
+    color:#ff4d9d;
+
+    font-size:0.9rem;
+}

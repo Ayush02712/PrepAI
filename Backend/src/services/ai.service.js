@@ -173,6 +173,40 @@ ${jobDescription}
 
 }
 
+async function generatePreparationGuide({
+    company,
+    role,
+    experienceLevel,
+    preparationTime
+}) {
 
+    const prompt = `
+You are an expert software engineering interview coach.
 
-module.exports = { generateInterviewReport }
+Generate a preparation guide for:
+
+Company: ${company}
+Role: ${role}
+Experience Level: ${experienceLevel}
+Preparation Time: ${preparationTime}
+
+Include:
+
+1. Important technical topics
+2. Common interview focus areas
+3. Behavioral preparation tips
+4. 10 practice questions
+5. A concise preparation roadmap
+
+Keep the response practical, concise, and structured.
+`;
+
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-lite",
+        contents: prompt
+    })
+
+    return response.text
+}
+
+module.exports = { generateInterviewReport, generatePreparationGuide }

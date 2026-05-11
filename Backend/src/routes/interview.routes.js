@@ -30,7 +30,19 @@ interviewRouter.get("/report/:interviewId", authMiddleware.authUser, interviewCo
 interviewRouter.get("/", authMiddleware.authUser, interviewController.getAllInterviewReportsController)
 
 
+interviewRouter.post(
+    "/preparation-guide",
+    authMiddleware.authUser,
+    interviewController.generatePreparationGuideController
+)
 
+interviewRouter.get(
+    "/preparation-guide/:guideId",
 
+    authMiddleware.authUser,
+
+    interviewController
+        .getPreparationGuideByIdController
+)
 
 module.exports = interviewRouter

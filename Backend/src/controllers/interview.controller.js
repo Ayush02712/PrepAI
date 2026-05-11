@@ -1,6 +1,8 @@
 const pdfParse = require("pdf-parse");
-const { generateInterviewReport } = require("../services/ai.service");
+const { generateInterviewReport , generatePreparationGuide } = require("../services/ai.service");
 const interviewReportModel = require("../models/interviewReport.model");
+const PreparationGuideModel =
+require("../models/preparationGuide.model")
 
 async function generateInterViewReportController(req, res) {
     try {
@@ -272,7 +274,120 @@ async function getAllInterviewReportsController(req, res) {
 }
 
 
+async function generatePreparationGuideController(req, res) {
+
+    try {
+
+        const {
+            company,
+            role,
+            experienceLevel,
+            preparationTime
+        } = req.body;
+
+        const result =
+            await generatePreparationGuide({
+                company,
+                role,
+                experienceLevel,
+                preparationTime
+            });
+
+        const guide =
+            await PreparationGuideModel.create({
+
+                user: req.user.id,
+
+                company,
+
+                role,
+
+                experienceLevel,
+
+                preparationTime,
+
+                result
+            });
+
+        return res.status(200).json({
+            guide
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message:
+            "Error generating guide"
+        });
+    }
+}
+
+async function getPreparationGuidesController(req, res) {
+
+    try {
+
+        const guides =
+            await PreparationGuideModel
+                .find({
+                    user: req.user.id
+                })
+                .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            guides
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+            message:
+            "Error fetching guides"
+        });
+    }
+}
+
+async function getPreparationGuideByIdController(
+    req,
+    res
+){
+
+    try {
+
+        const { guideId } = req.params;
+
+        const guide =
+            await PreparationGuideModel.findOne({
+
+                _id: guideId,
+
+                user: req.user.id
+            });
+
+        if(!guide){
+
+            return res.status(404).json({
+                message: "Guide not found"
+            })
+        }
+
+        return res.status(200).json({
+            guide
+        });
+
+    } catch(error){
+
+        console.log(error);
+
+        return res.status(500).json({
+            message:
+            "Error fetching guide"
+        })
+    }
+}
 
 
-
-module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController }
+module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generatePreparationGuideController, getPreparationGuidesController, getPreparationGuideByIdController }

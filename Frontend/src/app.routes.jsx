@@ -12,6 +12,11 @@ import Layout from "./components/Layout";
 
 import Landing from "./features//interview/pages/Landing";
 
+import PreparationGuide
+from "./features/interview/pages/PreparationGuide";
+
+import PreparationGuideDetails
+from "./features/interview/pages/PreparationGuideDetails";
 
 export const router = createBrowserRouter([
 
@@ -49,7 +54,17 @@ export const router = createBrowserRouter([
             {
                 path: "/interview/:interviewId",
                 element: <Interview />
-            }
+            },
+
+            {
+                path: "/preparation-guide",
+                element: <PreparationGuide />
+            },
+            
+            {
+                path: "/preparation-guide/:guideId",
+                element: <PreparationGuideDetails />
+            },
         ]
     }
 ]);

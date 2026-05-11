@@ -58,3 +58,46 @@ export const generateResumePdf = async ({ interviewReportId }) => {
 
     return response.data
 }
+
+export const generatePreparationGuide = async ({
+    company,
+    role,
+    experienceLevel,
+    preparationTime
+}) => {
+
+    const response = await api.post(
+        "/api/interview/preparation-guide",
+        {
+            company,
+            role,
+            experienceLevel,
+            preparationTime
+        }
+    )
+
+    return response.data
+}
+
+
+export const getPreparationGuides =
+async () => {
+
+    const response =
+        await api.get(
+            "/api/interview/preparation-guides"
+        )
+
+    return response.data
+}
+
+export const getPreparationGuideById =
+async (guideId) => {
+
+    const response =
+        await api.get(
+            `/api/interview/preparation-guide/${guideId}`
+        )
+
+    return response.data
+}
