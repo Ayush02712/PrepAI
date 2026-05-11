@@ -45,4 +45,14 @@ interviewRouter.get(
         .getPreparationGuideByIdController
 )
 
+interviewRouter.get(
+
+    "/preparation-guides",
+
+    authMiddleware.authUser,
+
+    interviewController
+        .getPreparationGuidesController
+)
+
 module.exports = interviewRouter

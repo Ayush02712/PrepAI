@@ -389,5 +389,35 @@ async function getPreparationGuideByIdController(
     }
 }
 
+async function getPreparationGuidesController(
+    req,
+    res
+){
 
-module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generatePreparationGuideController, getPreparationGuidesController, getPreparationGuideByIdController }
+    try {
+
+        const guides =
+            await PreparationGuideModel
+            .find({
+                user: req.user.id
+            })
+            .sort({
+                createdAt: -1
+            });
+
+        return res.status(200).json({
+            guides
+        });
+
+    } catch(error){
+
+        console.log(error);
+
+        return res.status(500).json({
+            message:
+            "Error fetching guides"
+        });
+    }
+}
+
+module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generatePreparationGuideController, getPreparationGuidesController, getPreparationGuideByIdController, getPreparationGuidesController }
