@@ -18,10 +18,10 @@ async function generateInterViewReportController(req, res) {
         const resumeContent = data.text
     .replace(/\s+/g, " ")
     .trim()
-    .slice(0, 4000);
+    .slice(0, 2000);
         const { selfDescription, jobDescription } = req.body;
 
-        const interViewReportByAi = await generateInterviewReport({
+       const interViewReportByAi = await generateInterviewReport({
             resume: resumeContent,
             selfDescription,
             jobDescription

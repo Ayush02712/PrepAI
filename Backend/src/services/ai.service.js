@@ -1,6 +1,6 @@
 const { GoogleGenAI } = require("@google/genai")
 const { z } = require("zod")
-const { zodToJsonSchema } = require("zod-to-json-schema")
+
 
 
 const ai = new GoogleGenAI({
@@ -19,15 +19,19 @@ const interviewReportSchema = z.object({
         "Excellent Match"
     ]).describe("Overall candidate suitability verdict based strictly on matchScore"),
     technicalQuestions: z.array(z.object({
-        question: z.string().describe("The technical question can be asked in the interview"),
-        intention: z.string().describe("The intention of interviewer behind asking this question"),
-        answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
-    })).describe("Technical questions that can be asked in the interview along with their intention and how to answer them"),
+    question: z.string().describe("A real technical interview question relevant to the candidate profile and job description"),
+
+    intention: z.string().describe("Why the interviewer asks this specific technical question"),
+
+    answer: z.string().describe("A concise example of how the candidate should answer this technical interview question")
+})).describe("Technical questions that can be asked in the interview along with their intention and how to answer them"),
     behavioralQuestions: z.array(z.object({
-        question: z.string().describe("The behavioral question that can be asked in the interview"),
-        intention: z.string().describe("The intention of interviewer behind asking this question"),
-        answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
-    })).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
+    question: z.string().describe("A real behavioral interview question relevant to the candidate and role"),
+
+    intention: z.string().describe("Why the interviewer asks this behavioral interview question"),
+
+    answer: z.string().describe("A concise STAR-style strategy for answering this behavioral interview question")
+})).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
     skillGaps: z.array(z.object({
         skill: z.string().describe("The skill which the candidate is lacking"),
         severity: z.enum([ "low", "medium", "high" ]).describe("The severity of this skill gap, i.e. how important is this skill for the job and how much it can impact the candidate's chances")
@@ -47,6 +51,12 @@ const prompt = `
 You are an expert AI interview coach.
 
 Return ONLY valid JSON.
+NEVER use placeholder values such as:
+- "question"
+- "intention"
+- "answer"
+
+Generate real interview questions, real intentions, and real answers only.
 
 The output MUST strictly follow the provided schema.
 
@@ -132,12 +142,20 @@ Example:
   "answer": "Discuss HTTP methods and stateless communication"
 }
 
+- Keep all answers concise (2-4 lines maximum)
+- Do NOT generate long paragraph answers
+- Keep roadmap tasks short
+
 3. behavioralQuestions
 - MUST be an array of at least 5 OBJECTS
 - EACH object MUST contain:
   - question
   - intention
   - answer
+
+- Keep all answers concise (2-4 lines maximum)
+- Do NOT generate long paragraph answers
+- Keep roadmap tasks short
 
 4. skillGaps
 - MUST be an array of OBJECTS
@@ -194,18 +212,73 @@ ${selfDescription}
 Job Description:
 ${jobDescription}
 `;
-
+    console.log("API KEY:", process.env.GOOGLE_GENAI_API_KEY)
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
         }
     })
 
-    return JSON.parse(response.text)
+    let parsed = {}
 
+try {
+    parsed = JSON.parse(response.text)
+} catch (err) {
+    console.log("JSON parse failed", err)
+    parsed = {}
+}
+
+    // Fix malformed technical questions
+parsed.technicalQuestions = parsed.technicalQuestions.map((item) => {
+    if (typeof item === "string") {
+        try {
+            return JSON.parse(item)
+        } catch {
+            return {
+                question: item,
+                intention: "",
+                answer: ""
+            }
+        }
+    }
+    return item
+})
+
+// Fix malformed behavioral questions
+parsed.behavioralQuestions = parsed.behavioralQuestions.map((item) => {
+    if (typeof item === "string") {
+        try {
+            return JSON.parse(item)
+        } catch {
+            return {
+                question: item,
+                intention: "",
+                answer: ""
+            }
+        }
+    }
+    return item
+})
+
+// Fix malformed preparation plan
+parsed.preparationPlan = parsed.preparationPlan.map((item) => {
+    if (typeof item === "string") {
+        try {
+            return JSON.parse(item)
+        } catch {
+            return {
+                day: 1,
+                focus: item,
+                tasks: []
+            }
+        }
+    }
+    return item
+})
+
+return parsed
 
 }
 
