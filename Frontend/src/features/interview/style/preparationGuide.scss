@@ -8,6 +8,9 @@
 .prep-container{
     max-width:1200px;
     margin:auto;
+
+    width:100%;
+    min-width:0;
 }
 
 .prep-box{
@@ -15,6 +18,11 @@
     border:1px solid #1e293b;
     border-radius:20px;
     padding:2rem;
+
+    width:100%;
+    min-width:0;
+    overflow:hidden;
+    box-sizing:border-box;
 }
 
 .prep-box h1{
@@ -65,18 +73,24 @@
 
 .result-box{
     margin-top:2rem;
-
     background:#0f172a;
-
     border:1px solid #1e293b;
-
     border-radius:20px;
-
     padding:2rem;
 
+    line-height:1.8;
     white-space:pre-wrap;
 
-    line-height:1.8;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+
+    overflow-x:auto;
+
+    overflow-wrap:break-word;
+    word-break:break-word;
+
+    box-sizing:border-box;
 }
 
 .recent-guides{
